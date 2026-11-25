@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Management System</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>Cloud-Based Student Management System</h1>
+    <p>Manage student information using AWS Cloud</p>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</header>
+
+<main>
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <section class="card">
+        <h2>Add New Student</h2>
+
+        <form action="/add" method="POST"
+              enctype="multipart/form-data">
+
+            <input type="text" name="name"
+                   placeholder="Student Name" required>
+
+            <input type="text" name="roll_no"
+                   placeholder="Roll Number" required>
+
+            <input type="text" name="course"
+                   placeholder="Course" required>
+
+            <input type="email" name="email"
+                   placeholder="Email Address" required>
+
+            <label>Upload Student Document (PDF/JPG/PNG)</label>
+            <input type="file" name="document"
+                   accept=".pdf,.png,.jpg,.jpeg">
+
+            <button type="submit">Add Student</button>
+        </form>
+    </section>
+
+    <section class="card">
+        <h2>Student Records</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Roll Number</th>
+                        <th>Course</th>
+                        <th>Email</th>
+                        <th>Document</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for student in students %}
+                    <tr>
+                        <td>{{ student.id }}</td>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.roll_no }}</td>
+                        <td>{{ student.course }}</td>
+                        <td>{{ student.email }}</td>
+
+                        <td>
+                            {% if student.document_url %}
+                                <a href="{{ student.document_url }}"
+                                   target="_blank"
+                                   rel="noopener">
+                                    View Document
+                                </a>
+                            {% else %}
+                                No Document
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <form action="/delete/{{ student.id }}"
+                                  method="POST">
+                                <button class="delete-btn"
+                                        type="submit">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7">No student records found.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>
